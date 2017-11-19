@@ -1,0 +1,3 @@
+[submodule "tables"]
+	path = tables
+	url = https://github.com/inAudible-NG/tables.git
