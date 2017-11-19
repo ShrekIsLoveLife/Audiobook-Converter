@@ -16,7 +16,7 @@ post_pass="abook.ws_4you"
 
 echo Is this correct: "\"${post_name}\""
 
-read -p "Continue? (Y/N): " confirm && [[ $confirm == [yY] || $confirm == [yY][eE][sS] ]] || exit 1
+read -p "Continue? (y/n): " confirm && [[ $confirm == [yY] || $confirm == [yY][eE][sS] ]] || exit 1
 
 mkdir "${post_name}"
 mkdir "${PWD##*/}"
