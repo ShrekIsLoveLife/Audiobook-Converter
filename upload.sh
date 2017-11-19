@@ -1,5 +1,4 @@
 #!/usr/bin/env bash
-# how to post using https://github.com/ERR1R/GoPostStuff (modified even more for abook)
 # for par2 multi-core install https://sabnzbd.org/wiki/installation/multicore-par2
 
 # get script directory
