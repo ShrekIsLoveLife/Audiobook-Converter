@@ -628,7 +628,7 @@ if __name__ == "__main__":
       if sys.argv[1][-4:].lower() == '.aax':
         if os.path.isfile(sys.argv[1]):
           if not os.path.isfile(sys.argv[1] + '.processed'):
-
+            print "AAX = " + sys.argv[1]
             a_meta_data = {}
             json_in = raw_input('Paste metadata: ').strip()
             if '--AMETA-BEGIN--' in json_in and '--AMETA-BEGIN--' in json_in:
