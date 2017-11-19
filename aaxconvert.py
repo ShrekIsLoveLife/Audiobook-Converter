@@ -342,6 +342,7 @@ def replace_nfo_vars(nfo_file, fileinfo, is_template=False):
     else:
       if is_template:
         # should add split code here, but want to consolidate this more
+        nfo_file = re.sub(r'{meta:author_plain}', ', '.join(fileinfo['meta']['artist']), nfo_file)
         nfo_file = re.sub(r'{meta:author}', '[url=http://www.audible.com/search?advsearchKeywords=' + fileinfo['meta']['artist'] + ']' + fileinfo['meta']['artist'] + '[/url]', nfo_file)
       else:
         nfo_file = re.sub(r'{meta:author_plain}', fileinfo['meta']['artist'], nfo_file)
