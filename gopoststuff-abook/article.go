@@ -3,7 +3,7 @@ package main
 import (
     "bytes"
     "fmt"
-    "./yencode"
+    "github.com/ShrekIsLoveLife/Audiobook-Converter/gopoststuff-abook/yencode"
     "hash/crc32"
     "strings"
     "time"
