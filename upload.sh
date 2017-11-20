@@ -11,7 +11,7 @@ done
 DIR="$( cd -P "$( dirname "$SOURCE" )" && pwd )"
 
 read -p "enter search string: " post_name
-post_pass="abook.ws_4you"
+read -p "enter post password: " post_pass
 
 echo Is this correct: "\"${post_name}\""
 

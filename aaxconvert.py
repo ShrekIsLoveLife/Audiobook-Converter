@@ -165,7 +165,7 @@ Encoded At:   [color=white]Lossless Conversion[/color][/size]
 
 
 [hide]Search: [code]abook.ws - {meta:instance_hash}[/code][/hide]
-[hide]Password: [code]abook.ws_4you[/code][/hide]
+[hide]Password: [code]{meta:password}[/code][/hide]
 
 [size=8pt][i]Note: These are not my rips. Many thanks to the original uploader(s).[/i][/size]
 '''
