@@ -3,6 +3,8 @@
 
 # get script directory
 SOURCE="${BASH_SOURCE[0]}"
+DIR_LN="$( cd -P "$( dirname "$SOURCE" )" && pwd )"
+# echo ${DIR_LN}
 while [ -h "$SOURCE" ]; do # resolve $SOURCE until the file is no longer a symlink
   DIR="$( cd -P "$( dirname "$SOURCE" )" && pwd )"
   SOURCE="$(readlink "$SOURCE")"
@@ -10,8 +12,10 @@ while [ -h "$SOURCE" ]; do # resolve $SOURCE until the file is no longer a symli
 done
 DIR="$( cd -P "$( dirname "$SOURCE" )" && pwd )"
 
+post_pass=`cat ${DIR_LN}/rar.passwd`
+# echo ${post_pass}
+
 read -p "enter search string: " post_name
-read -p "enter post password: " post_pass
 
 echo Is this correct: "\"${post_name}\""
 

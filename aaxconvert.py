@@ -26,6 +26,9 @@
 #   * Uploads cover to imgur
 
 # How to Use:
+#     Create a file called rar.passwd containing a single line of your rar password.
+#        This is used for the template generator and the upload/archive script
+#
 #     ./aaxconvert.py <path_to_aax>
 #        Process an aax file
 #
@@ -37,6 +40,9 @@
 #     or
 #     Use Notepad++ (32bit version only) and TextFX plugin (not compatiable with 64bit) [TextFX Edit->Rewrap] to auto wrap description text.
 #   Adjust the password, imgur_url, author (if multiple, in template) read by/narriator, date, publisher, series position (if a series), description, take note of category
+#
+#   To read top of forum_template run the following in the converted folder:
+#     head -n15 *.forum_template*
 
 # Notes:
 #     * You can edit the templates and headers from the top of this file's source code
@@ -122,6 +128,9 @@ nfo_post_template = '''
 Subject:
 {meta:author_plain} - {meta:title_filtered} ({meta:date_orig})
 
+Password:
+{meta:rar_passwd}
+
 Search String:
 abook.ws - {meta:instance_hash}
 
@@ -165,7 +174,7 @@ Encoded At:   [color=white]Lossless Conversion[/color][/size]
 
 
 [hide]Search: [code]abook.ws - {meta:instance_hash}[/code][/hide]
-[hide]Password: [code]{meta:password}[/code][/hide]
+[hide]Password: [code]{meta:rar_passwd}[/code][/hide]
 
 [size=8pt][i]Note: These are not my rips. Many thanks to the original uploader(s).[/i][/size]
 '''
@@ -384,6 +393,11 @@ def replace_nfo_vars(nfo_file, fileinfo, is_template=False):
     else:
       nfo_file = re.sub(r'{meta:publisher}', fileinfo['meta']['publisher'], nfo_file)
 
+    if 'rar_passwd' in fileinfo['a_meta_data']:
+      nfo_file = re.sub(r'{meta:rar_passwd}', fileinfo['a_meta_data']['rar_passwd'], nfo_file)
+    else:
+      nfo_file = re.sub(r'{meta:rar_passwd}', 'unknown', nfo_file)
+
     nfo_file = re.sub(r'{meta:album}', fileinfo['meta']['album'], nfo_file)
     nfo_file = re.sub(r'{meta:album_artist}', fileinfo['meta']['album_artist'], nfo_file)
     nfo_file = re.sub(r'{meta:series_position}', fileinfo['meta']['series_position'], nfo_file)
@@ -423,13 +437,14 @@ def process_audiobook(filename, a_meta_data):
   fileinfo = {}
 
   if exitcode == 0:
-    # checksum is provided in stderr
-    matchObj = re.search( r'file checksum == (.*?)$', err, re.M|re.I)
-    if matchObj:
-      fileinfo['checksum'] = matchObj.group(1).strip()
-    else:
-      print 'Error: No checksum found for the aax file.'
-      return
+    if a_meta_data['type'] == 'aax':
+      # checksum is provided in stderr
+      matchObj = re.search( r'file checksum == (.*?)$', err, re.M|re.I)
+      if matchObj:
+        fileinfo['checksum'] = matchObj.group(1).strip()
+      else:
+        print 'Error: No checksum found for the aax file.'
+        return
 
     data = json.loads(out)
     fileinfo['a_meta_data'] = a_meta_data
@@ -479,20 +494,23 @@ def process_audiobook(filename, a_meta_data):
     print 'Cover: ' + fileinfo['meta']['imgur_url']
 
     fileinfo['activation_bytes'] = ''
-    print 'Getting activation bytes for (' + fileinfo['checksum'] + ')...'
-    tdir = os.path.join(os.path.dirname(os.path.realpath(__file__)),'tables')
-    exitcode, out, err = run_get_exitcode_stdout_stderr([
-        os.path.join(tdir, 'rcrack'), 
-        '.', 
-        '-h', 
-        fileinfo['checksum'],
-        ], 
-        tdir )
-    if exitcode == 0:
-      matchObj = re.search( r'hex:(.*?)$', out, re.M|re.I)
-      if matchObj:
-        fileinfo['activation_bytes'] = matchObj.group(1).strip()
-        print '    -> ' + fileinfo['activation_bytes']
+    if a_meta_data['type'] == 'aax':
+      print 'Getting activation bytes for (' + fileinfo['checksum'] + ')...'
+      tdir = os.path.join(os.path.dirname(os.path.abspath(__file__)),'tables')
+      exitcode, out, err = run_get_exitcode_stdout_stderr([
+          os.path.join(tdir, 'rcrack'), 
+          '.', 
+          '-h', 
+          fileinfo['checksum'],
+          ], 
+          tdir )
+      if exitcode == 0:
+        matchObj = re.search( r'hex:(.*?)$', out, re.M|re.I)
+        if matchObj:
+          fileinfo['activation_bytes'] = matchObj.group(1).strip()
+          print '    -> ' + fileinfo['activation_bytes']
+    else:
+      fileinfo['activation_bytes'] = 'non-aax'
 
     if fileinfo['activation_bytes'] == '':
       print 'Error: No activation bytes discovered.'
@@ -539,21 +557,38 @@ def process_audiobook(filename, a_meta_data):
         #   file_out
         #   ]
         #
-        # loseless
-        cmd = [
-          'ffmpeg',
-          '-y', 
-          '-activation_bytes', fileinfo['activation_bytes'], 
-          '-i', filename, 
-          '-vn',
-          '-c:a', 'copy',
-           '-ss', chapter['start_time'],
-          '-to', chapter['end_time'],
-          '-metadata', 'title="' + chapter_title_escaped + '"', # I hate it when your player just says the book name and not chapter info
-          '-metadata', 'track="' + str( chapter['id']+1 ) + '"',
-          '-strict', '-2',  # needed for some versions of ffmpeg for aac
-          file_out
-          ]
+        if a_meta_data['type'] == 'aax':
+          # loseless
+          cmd = [
+            'ffmpeg',
+            '-y', 
+            '-activation_bytes', fileinfo['activation_bytes'], 
+            '-i', filename, 
+            '-vn',
+            '-c:a', 'copy',
+             '-ss', chapter['start_time'],
+            '-to', chapter['end_time'],
+            '-metadata', 'title="' + chapter_title_escaped + '"', # I hate it when your player just says the book name and not chapter info
+            '-metadata', 'track="' + str( chapter['id']+1 ) + '"',
+            '-strict', '-2',  # needed for some versions of ffmpeg for aac
+            file_out
+            ]
+        else:
+          # loseless
+          cmd = [
+            'ffmpeg',
+            '-y', 
+            '-i', filename, 
+            '-vn',
+            '-c:a', 'copy',
+             '-ss', chapter['start_time'],
+            '-to', chapter['end_time'],
+            '-metadata', 'title="' + chapter_title_escaped + '"', # I hate it when your player just says the book name and not chapter info
+            '-metadata', 'track="' + str( chapter['id']+1 ) + '"',
+            '-strict', '-2',  # needed for some versions of ffmpeg for aac
+            file_out
+            ]
+
         chapter['process_start_time'] = timeit.default_timer()
         # exitcode, out, err = run_get_exitcode_stdout_stderr(cmd, '.'); print exitcode, out, err # debug version
         run_cb_time(cmd, status_handler=status_handler, chapter_info=chapter)
@@ -624,17 +659,35 @@ if __name__ == "__main__":
 
   cmd_line = 'Command Line is: ' + sys.argv[0] + ' path_to_filename.aax\n'
 
+
+
   if len(sys.argv) == 2:
     if len(sys.argv[1]) >= 4:
-      if sys.argv[1][-4:].lower() == '.aax':
+      if sys.argv[1][-4:].lower() == '.aax' or sys.argv[1][-4:].lower() == '.m4b' :
         if os.path.isfile(sys.argv[1]):
+          print "Input = " + sys.argv[1]
           if not os.path.isfile(sys.argv[1] + '.processed'):
-            print "AAX = " + sys.argv[1]
             a_meta_data = {}
+
             json_in = raw_input('Paste metadata: ').strip()
             if '--AMETA-BEGIN--' in json_in and '--AMETA-BEGIN--' in json_in:
               json_in = json_in.replace('--AMETA-BEGIN--','').replace('--AMETA-END--','')
               a_meta_data = json.loads(json_in)
+
+            rar_passwd_file = os.path.join(os.path.dirname(os.path.abspath(__file__)),'rar.passwd')
+            a_meta_data['rar_passwd'] = ''
+            if os.path.isfile(rar_passwd_file):
+              fh = open(rar_passwd_file, 'r') 
+              a_meta_data['rar_passwd'] = fh.read() 
+              fh.close() 
+              if len(a_meta_data['rar_passwd']) == 0:
+                print 'error: rar.passwd is empty'
+                sys.exit(1)
+            else:
+              print 'error: rar.passwd is missing'
+              sys.exit(1)    
+
+            a_meta_data['type'] = sys.argv[1][-3:].lower()
 
             process_audiobook(sys.argv[1], a_meta_data)
 
