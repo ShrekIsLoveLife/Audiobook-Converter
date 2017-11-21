@@ -558,7 +558,7 @@ def process_audiobook(filename, a_meta_data):
         #   ]
         #
         if a_meta_data['type'] == 'aax':
-          # loseless
+          # lossless
           cmd = [
             'ffmpeg',
             '-y', 
@@ -574,7 +574,7 @@ def process_audiobook(filename, a_meta_data):
             file_out
             ]
         else:
-          # loseless
+          # lossless
           cmd = [
             'ffmpeg',
             '-y', 
