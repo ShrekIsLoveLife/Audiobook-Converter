@@ -23,7 +23,7 @@ read -p "Continue? (y/n): " confirm && [[ $confirm == [yY] || $confirm == [yY][e
 
 mkdir "${post_name}"
 mkdir "${PWD##*/}"
-mv *.nfo *.png *.jpg *.m3u *.mp4 "${PWD##*/}/"
+mv *.nfo *.png *.jpg *.m3u *.mp4 *.mp3 "${PWD##*/}/"
 cd "${PWD##*/}/"
 mv *.forum_template.txt ../
 cd ../

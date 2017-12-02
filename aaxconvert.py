@@ -451,14 +451,15 @@ def process_audiobook(filename, a_meta_data):
     fileinfo['chapters'] = data['chapters']
     fileinfo['meta'] = data['format']['tags']
     fileinfo['meta']['duration'] = float(data['format']['duration'])
-    fileinfo['meta']['file_title'] = fileinfo['meta']['artist'] + ' - ' + fileinfo['meta']['date']  + ' - ' + fileinfo['meta']['title']    
+    fileinfo['meta']['file_title'] = fileinfo['meta']['artist'][:30] + ' (' + fileinfo['meta']['date'][:15] + ') ' + fileinfo['meta']['title'][:80]
     fileinfo['meta']['file_title'] = re.sub('[^-a-zA-Z0-9_.() ]+', ' ', fileinfo['meta']['file_title'])
     fileinfo['meta']['title_filtered'] = re.sub(' \(Unabridged\)', '', fileinfo['meta']['title'])
+    fileinfo['meta']['file_title_filtered'] = re.sub(' \(Unabridged\)', '', fileinfo['meta']['file_title'])[:240]
 
     m = hashlib.md5() # ('md5', 'sha1', 'sha224', 'sha256', 'sha384', 'sha512')
     m.update("abook.ws")
     m.update(str(time.time()))
-    m.update(fileinfo['meta']['file_title'])
+    m.update(fileinfo['meta']['file_title_filtered'])
     fileinfo['meta']['instance_hash'] =  re.sub('[^-a-zA-Z0-9_.() ]+', '', m.digest().encode("base64").strip()) #m.hexdigest()
 
     m, s = divmod(fileinfo['meta']['duration'], 60)
@@ -467,16 +468,16 @@ def process_audiobook(filename, a_meta_data):
 
     fileinfo['meta']['num_chapters'] = len(fileinfo['chapters'])
 
-    print 'Creating directory: ' + fileinfo['meta']['file_title'] + '...'
+    print 'Creating directory: ' + fileinfo['meta']['file_title_filtered'] + '...'
     try:
-      if not os.path.exists(fileinfo['meta']['file_title']):
-        os.makedirs(fileinfo['meta']['file_title'])
+      if not os.path.exists(fileinfo['meta']['file_title_filtered']):
+        os.makedirs(fileinfo['meta']['file_title_filtered'])
       else:
-        print 'Error: The folder "' + fileinfo['meta']['file_title'] + '"" Already Exists'
+        print 'Error: The folder "' + fileinfo['meta']['file_title_filtered'] + '"" Already Exists'
         return
     except OSError as e:
         if e.errno != errno.EEXIST:
-          print 'Error: The folder "' + fileinfo['meta']['file_title'] + '"" Already Exists'
+          print 'Error: The folder "' + fileinfo['meta']['file_title_filtered'] + '"" Already Exists'
           return
           raise
 
@@ -486,11 +487,11 @@ def process_audiobook(filename, a_meta_data):
       '-y', 
       '-i', 
       filename, 
-      os.path.join(fileinfo['meta']['file_title'],'cover.jpg')
+      os.path.join(fileinfo['meta']['file_title_filtered'],'cover.jpg')
       ], 
       '.' )
 
-    fileinfo['meta']['imgur_url'] = upload_imgur(os.path.join(fileinfo['meta']['file_title'],'cover.jpg'))
+    fileinfo['meta']['imgur_url'] = upload_imgur(os.path.join(fileinfo['meta']['file_title_filtered'],'cover.jpg'))
     print 'Cover: ' + fileinfo['meta']['imgur_url']
 
     fileinfo['activation_bytes'] = ''
@@ -525,21 +526,21 @@ def process_audiobook(filename, a_meta_data):
         processed_percent = int(round(processed / (fileinfo['meta']['num_chapters'] + 0.0) * 100, 0))
         processed += 1
         padded_num = ('%0' + zeropadct + 'd') % ( chapter['id']+1 )
-        chapter['filename'] = padded_num + ' - ' + chapter['tags']['title'] + ' - ' + fileinfo['meta']['file_title'] + '.mp4'
+        chapter['filename'] = padded_num + ' - ' + fileinfo['meta']['file_title_filtered'] + '.mp4'
         print '\n -> (' + str(processed_percent) + '%) ' + chapter['filename']
         if (chapter['id'] == 0):
           chapter['start_time'] = '2.0' # Remove 'This is Audible' from the beginning
         if (chapter['id'] == fileinfo['meta']['num_chapters'] -1):
           chapter['end_time'] = str( float(chapter['end_time']) - 4.0 ) # Remove 'Audible hopes you enjoyed this program' from the end
         chapter['duration'] = float(chapter['end_time']) - float(chapter['start_time'])
-        m3u += '#EXTINF:' + str(chapter['duration']) + ',' + fileinfo['meta']['artist'] + ' - ' + chapter['tags']['title'] + ' - ' + fileinfo['meta']['title'] + '\n'
+        m3u += '#EXTINF:' + str(chapter['duration']) + ',' + fileinfo['meta']['artist'] + ' - ' + fileinfo['meta']['title'] + '\n'
         m3u += chapter['filename'] + '\n\n'
         m, s = divmod( chapter['duration'], 60)
         h, m = divmod(m, 60)
         chapter['duration_s'] = "%02d:%02d:%02d" % (h, m, s)
         print '     Start: ' + chapter['start_time'] + '     End: ' + chapter['end_time'] + '       Duration: ' + chapter['duration_s']
         chapter_title_escaped = re.sub('"', '', (padded_num + ' - ' + chapter['tags']['title']) + ' - ' + fileinfo['meta']['title'])
-        file_out = os.path.join(fileinfo['meta']['file_title'], chapter['filename'])
+        file_out = os.path.join(fileinfo['meta']['file_title_filtered'], chapter['filename'])
         # cmd = [
         #   'ffmpeg',
         #   '-y', 
@@ -598,12 +599,12 @@ def process_audiobook(filename, a_meta_data):
           return
         # break # debug single track
       print 'Creating m3u...'
-      fh = open(os.path.join(fileinfo['meta']['file_title'],fileinfo['meta']['file_title'] + '.m3u'), 'w')
+      fh = open(os.path.join(fileinfo['meta']['file_title_filtered'],fileinfo['meta']['file_title_filtered'] + '.m3u'), 'w')
       fh.write(m3u) # Write out utf8 txt
       fh.close() 
 
       print 'Getting total size...'
-      fileinfo['meta']['total_size'] = GetHumanReadable(getdirsize(fileinfo['meta']['file_title']))
+      fileinfo['meta']['total_size'] = GetHumanReadable(getdirsize(fileinfo['meta']['file_title_filtered']))
 
       print 'Verifying NFO meta...'
       if ('imgur_url' not in fileinfo['meta'] ): fileinfo['meta']['imgur_url'] = 'IMGURL'
@@ -627,28 +628,28 @@ def process_audiobook(filename, a_meta_data):
       print 'Creating base NFO files...'
       nfo_file = replace_nfo_vars(nfo_template, fileinfo, False)
       nfo_file = re.sub(r'&#169;', '(c)', nfo_file)
-      fh = open(os.path.join(fileinfo['meta']['file_title'],fileinfo['meta']['file_title'] + '.nfo'), 'w')
+      fh = open(os.path.join(fileinfo['meta']['file_title_filtered'],fileinfo['meta']['file_title_filtered'] + '.nfo'), 'w')
       # fh.write((header_file + nfo_file).encode("cp437", errors='replace')) # Write out proper NFO file
       fh.write((header_file + nfo_file).encode("cp437", errors='ignore')) # Write out proper NFO file
       fh.close() 
-      # fh = open(os.path.join(fileinfo['meta']['file_title'],fileinfo['meta']['file_title'] + '.utf8.txt'), 'w')
+      # fh = open(os.path.join(fileinfo['meta']['file_title_filtered'],fileinfo['meta']['file_title_filtered'] + '.utf8.txt'), 'w')
       # fh.write(header_file + nfo_file) # Write out utf8 txt
       # fh.close() 
-      # fh = open(os.path.join(fileinfo['meta']['file_title'],fileinfo['meta']['file_title'] + '.txt'), 'w')
+      # fh = open(os.path.join(fileinfo['meta']['file_title_filtered'],fileinfo['meta']['file_title_filtered'] + '.txt'), 'w')
       # fh.write(header_file_txt + nfo_file) # Write out utf8 txt
       # fh.close() 
 
       print 'Creating base Forum Template file...'
       nfo_file = replace_nfo_vars(nfo_post_template, fileinfo, True)
       nfo_file = re.sub(r'&#169;', '(c)', nfo_file)
-      fh = open(os.path.join(fileinfo['meta']['file_title'],fileinfo['meta']['file_title'] + '.forum_template.txt'), 'w')
+      fh = open(os.path.join(fileinfo['meta']['file_title_filtered'],fileinfo['meta']['file_title_filtered'] + '.forum_template.txt'), 'w')
       fh.write(nfo_file) 
       fh.close() 
 
       fh = open(filename + '.processed', 'w')
       fh.write('processed')
       fh.close()
-      print '\Folder:\n' + fileinfo['meta']['file_title']
+      print '\Folder:\n' + fileinfo['meta']['file_title_filtered']
       print '\nCover:\n' + fileinfo['meta']['imgur_url']
       print '\nSearch String:\nabook.ws - ' + fileinfo['meta']['instance_hash']
       print '\nDone :)\n'
