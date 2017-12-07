@@ -92,6 +92,8 @@ from subprocess import Popen, PIPE
 import subprocess
 import json, hashlib, time, datetime, timeit
 # from pprint import pprint
+import gzip, cPickle
+
 import urllib2, urllib, base64
 
 reload(sys)  
@@ -263,6 +265,20 @@ def status_handler(line, chapter_info=None):
     prevlinect = len(line)
     print line + '\r',
     return
+
+
+
+def pickle(fname, obj):
+    # import cPickle, gzip
+    cPickle.dump(obj=obj, file=gzip.open(fname, "wb", compresslevel=3), protocol=2)
+
+def unpickle(fname):
+    # import cPickle, gzip
+    if os.path.isfile(fname):
+      return cPickle.load(gzip.open(fname, "rb"))
+    else:
+      return {}
+
 
 def run_cb_time(command, status_handler=None, chapter_info=None):
   # print ' '.join(command) # debug
@@ -497,19 +513,26 @@ def process_audiobook(filename, a_meta_data):
     fileinfo['activation_bytes'] = ''
     if a_meta_data['type'] == 'aax':
       print 'Getting activation bytes for (' + fileinfo['checksum'] + ')...'
-      tdir = os.path.join(os.path.dirname(os.path.abspath(__file__)),'tables')
-      exitcode, out, err = run_get_exitcode_stdout_stderr([
-          os.path.join(tdir, 'rcrack'), 
-          '.', 
-          '-h', 
-          fileinfo['checksum'],
-          ], 
-          tdir )
-      if exitcode == 0:
-        matchObj = re.search( r'hex:(.*?)$', out, re.M|re.I)
-        if matchObj:
-          fileinfo['activation_bytes'] = matchObj.group(1).strip()
-          print '    -> ' + fileinfo['activation_bytes']
+      activation_bytes_cache = unpickle(a_meta_data['activation_bytes_cache_file'])
+      if (fileinfo['checksum'] in activation_bytes_cache):
+        fileinfo['activation_bytes'] = activation_bytes_cache[fileinfo['checksum']]
+        print '  (cache) -> ' + fileinfo['activation_bytes']
+      else:
+        tdir = os.path.join(os.path.dirname(os.path.abspath(__file__)),'tables')
+        exitcode, out, err = run_get_exitcode_stdout_stderr([
+            os.path.join(tdir, 'rcrack'), 
+            '.', 
+            '-h', 
+            fileinfo['checksum'],
+            ], 
+            tdir )
+        if exitcode == 0:
+          matchObj = re.search( r'hex:(.*?)$', out, re.M|re.I)
+          if matchObj:
+            fileinfo['activation_bytes'] = matchObj.group(1).strip()
+            print '    -> ' + fileinfo['activation_bytes']
+            activation_bytes_cache[fileinfo['checksum']] = fileinfo['activation_bytes']
+            pickle(a_meta_data['activation_bytes_cache_file'],activation_bytes_cache)
     else:
       fileinfo['activation_bytes'] = 'non-aax'
 
@@ -687,6 +710,8 @@ if __name__ == "__main__":
             else:
               print 'error: rar.passwd is missing'
               sys.exit(1)    
+
+            a_meta_data['activation_bytes_cache_file'] = os.path.join(os.path.dirname(os.path.abspath(__file__)),'activation_bytes.cache')
 
             a_meta_data['type'] = sys.argv[1][-3:].lower()
 
