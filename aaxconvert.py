@@ -172,7 +172,7 @@ Encoded At:   [color=white]Lossless Conversion[/color][/size]
 
 
 [color=yellow]Posted by proxy[/color]
-[color=yellow]Posted by proxy for[/color] [color=red]{meta:proxy_name}[/color][color=yellow]![/color]
+[color=yellow]Posted by proxy for[/color] [color=red]{meta:proxy_name}[/color]
 
 
 [hide]Search: [code]abook.ws - {meta:instance_hash}[/code][/hide]
@@ -507,7 +507,10 @@ def process_audiobook(filename, a_meta_data):
       ], 
       '.' )
 
-    fileinfo['meta']['imgur_url'] = upload_imgur(os.path.join(fileinfo['meta']['file_title_filtered'],'cover.jpg'))
+    if os.path.isfile(os.path.join(fileinfo['meta']['file_title_filtered'],'cover.jpg')):
+      fileinfo['meta']['imgur_url'] = upload_imgur(os.path.join(fileinfo['meta']['file_title_filtered'],'cover.jpg'))
+    else:
+      fileinfo['meta']['imgur_url'] = 'ADD_IMAGE_URL'
     print 'Cover: ' + fileinfo['meta']['imgur_url']
 
     fileinfo['activation_bytes'] = ''
