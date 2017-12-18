@@ -172,7 +172,7 @@ Encoded At:   [color=white]Lossless Conversion[/color][/size]
 
 
 [color=yellow]Posted by proxy[/color]
-[color=yellow]Posted by proxy for[/color] [color=red]{meta:proxy_name}[/color]
+[color=yellow]Posted by proxy for[/color] [url=https://abook.ws/index.php?action=profile;u=][color=red]{meta:proxy_name}[/color][/url]
 
 
 [hide]Search: [code]abook.ws - {meta:instance_hash}[/code][/hide]
