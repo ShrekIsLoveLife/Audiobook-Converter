@@ -333,17 +333,20 @@ def wrap(text, width=80):
 
 def upload_imgur(image_file):
   # should add more debugging here
-  f = open(image_file, "rb") # open our image file as read only in binary mode
-  image_data = f.read()              # read in our image file
-  b64_image = base64.standard_b64encode(image_data)
-  client_id = "3e7a4deb7ac67da" # taken from https://github.com/Ceryn/img/blob/master/img.sh but you can get your own at https://api.imgur.com/oauth2/addclient select anon usage
-  headers = {'Authorization': 'Client-ID ' + client_id}
-  data = {'image': b64_image} # could include titles and other stuff https://api.imgur.com/endpoints/image
-  request = urllib2.Request(url="https://api.imgur.com/3/upload.json", data=urllib.urlencode(data),headers=headers)
-  response = urllib2.urlopen(request).read()
-  parse = json.loads(response)
-  return parse['data']['link']
-
+  try:
+    f = open(image_file, "rb") # open our image file as read only in binary mode
+    image_data = f.read()              # read in our image file
+    b64_image = base64.standard_b64encode(image_data)
+    client_id = "3e7a4deb7ac67da" # taken from https://github.com/Ceryn/img/blob/master/img.sh but you can get your own at https://api.imgur.com/oauth2/addclient select anon usage
+    headers = {'Authorization': 'Client-ID ' + client_id}
+    data = {'image': b64_image} # could include titles and other stuff https://api.imgur.com/endpoints/image
+    request = urllib2.Request(url="https://api.imgur.com/3/upload.json", data=urllib.urlencode(data),headers=headers)
+    response = urllib2.urlopen(request).read()
+    parse = json.loads(response)
+    return parse['data']['link']
+  except:
+    print '*** ERROR UPLOADING COVER ***'
+    return 'ERROR_UPLOADING'
 
 def replace_nfo_vars(nfo_file, fileinfo, is_template=False):
     nfo_file = re.sub(r'{meta:imgur_url}', fileinfo['meta']['imgur_url'], nfo_file)
