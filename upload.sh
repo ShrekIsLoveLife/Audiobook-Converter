@@ -15,11 +15,20 @@ DIR="$( cd -P "$( dirname "$SOURCE" )" && pwd )"
 post_pass=`cat ${DIR_LN}/rar.passwd`
 # echo ${post_pass}
 
-read -p "enter search string: " post_name
+post_name=`cat usenet_name.txt 2>/dev/null`
+# echo ${post_name}
 
-echo Is this correct: "\"${post_name}\""
+if [ -z "${post_name}"  ]
+then
+	read -p "enter search string: " post_name
+	echo Is this correct: "\"${post_name}\""
+	read -p "Continue? (y/n): " confirm && [[ $confirm == [yY] || $confirm == [yY][eE][sS] ]] || exit 1
+else
+	echo Is this correct: "\"${post_name}\""
+	read -p "Continue? (y/n): " confirm && [[ $confirm == [yY] || $confirm == [yY][eE][sS] ]] || exit 1
+fi
 
-read -p "Continue? (y/n): " confirm && [[ $confirm == [yY] || $confirm == [yY][eE][sS] ]] || exit 1
+
 
 mkdir "${post_name}"
 mkdir "${PWD##*/}"
