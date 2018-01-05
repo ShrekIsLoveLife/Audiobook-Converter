@@ -128,7 +128,7 @@ nfo_post_template = '''
 [hide][code]    DON'T POST THIS PART
 
 Subject:
-{meta:author_plain} - {meta:title_filtered} ({meta:date_orig})
+{meta:author_plain} - {meta:title_filtered} ({meta:date_orig}) {meta:series_formatted}
 
 Password:
 {meta:rar_passwd}
@@ -415,8 +415,11 @@ def replace_nfo_vars(nfo_file, fileinfo, is_template=False):
 
     if 'series' in fileinfo['a_meta_data']:
       nfo_file = re.sub(r'{meta:series}', fileinfo['a_meta_data']['series'], nfo_file)
+      fileinfo['a_meta_data']['series_formatted'] = re.sub(r'N\/A', '', fileinfo['a_meta_data']['series'])
+      nfo_file = re.sub(r'{meta:series_formatted}', fileinfo['a_meta_data']['series_formatted'], nfo_file)
     else:
       nfo_file = re.sub(r'{meta:series}', 'N/A', nfo_file)
+      nfo_file = re.sub(r'{meta:series_formatted}', '', nfo_file)
     
     nfo_file = re.sub(r'{meta:album}', fileinfo['meta']['album'], nfo_file)
     nfo_file = re.sub(r'{meta:album_artist}', fileinfo['meta']['album_artist'], nfo_file)
