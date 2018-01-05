@@ -150,9 +150,7 @@ Read By:   [color=white]{meta:read_by}[/color]
 Copyright:   [color=white]{meta:copyright}[/color]
 Date:   [color=white]{meta:date}[/color]
 Publisher:   [color=white]{meta:publisher}[/color]
-Series Name:   [color=white]{meta:album}[/color]
-Series Artist:   [color=white]{meta:album_artist}[/color]
-Series Position:   [color=white]{meta:series_position}[/color]
+Series:   [color=white]{meta:series}[/color]
 
 [b]File Information[/b]
 ================
@@ -193,9 +191,7 @@ nfo_template += '{0: <25}'.format(' Read By:') + '{meta:read_by}\n'
 nfo_template += '{0: <25}'.format(' Copyright:') + '{meta:copyright}\n'
 nfo_template += '{0: <25}'.format(' Date:') + '{meta:date}\n'
 nfo_template += '{0: <25}'.format(' Publisher:') + '{meta:publisher}\n'
-nfo_template += '{0: <25}'.format(' Series Name:') + '{meta:album}\n'
-nfo_template += '{0: <25}'.format(' Series Artist:') + '{meta:album_artist}\n'
-nfo_template += '{0: <25}'.format(' Series Position:') + '{meta:series_position}\n'
+nfo_template += '{0: <25}'.format(' Series:') + '{meta:series}\n'
 nfo_template += '''
 File Information
 ================
@@ -417,6 +413,11 @@ def replace_nfo_vars(nfo_file, fileinfo, is_template=False):
     else:
       nfo_file = re.sub(r'{meta:rar_passwd}', 'unknown', nfo_file)
 
+    if 'series' in fileinfo['a_meta_data']:
+      nfo_file = re.sub(r'{meta:series}', fileinfo['a_meta_data']['series'], nfo_file)
+    else:
+      nfo_file = re.sub(r'{meta:series}', 'N/A', nfo_file)
+    
     nfo_file = re.sub(r'{meta:album}', fileinfo['meta']['album'], nfo_file)
     nfo_file = re.sub(r'{meta:album_artist}', fileinfo['meta']['album_artist'], nfo_file)
     nfo_file = re.sub(r'{meta:series_position}', fileinfo['meta']['series_position'], nfo_file)
@@ -644,6 +645,7 @@ def process_audiobook(filename, a_meta_data):
       if ('copyright' not in fileinfo['meta'] ): fileinfo['meta']['copyright'] = 'n/a'
       if ('date' not in fileinfo['meta'] ): fileinfo['meta']['date'] = 'n/a'
       if ('publisher' not in fileinfo['meta'] ): fileinfo['meta']['publisher'] = 'n/a'
+      if ('series' not in fileinfo['meta'] ): fileinfo['meta']['series'] = 'n/a'
       if ('album' not in fileinfo['meta'] ): fileinfo['meta']['album'] = 'n/a'
       if ('album_artist' not in fileinfo['meta'] ): fileinfo['meta']['album_artist'] = 'n/a'
       if ('series_position' not in fileinfo['meta'] ): fileinfo['meta']['series_position'] = 'n/a'
@@ -673,6 +675,10 @@ def process_audiobook(filename, a_meta_data):
       nfo_file = re.sub(r'&#169;', '(c)', nfo_file)
       fh = open(os.path.join(fileinfo['meta']['file_title_filtered'],fileinfo['meta']['file_title_filtered'] + '.forum_template.txt'), 'w')
       fh.write(nfo_file) 
+      fh.close() 
+
+      fh = open(os.path.join(fileinfo['meta']['file_title_filtered'], 'usenet_name.txt'), 'w')
+      fh.write('abook.ws - ' + fileinfo['meta']['instance_hash']) 
       fh.close() 
 
       fh = open(filename + '.processed', 'w')
