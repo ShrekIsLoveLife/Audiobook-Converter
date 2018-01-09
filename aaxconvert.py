@@ -474,7 +474,14 @@ def process_audiobook(filename, a_meta_data):
     fileinfo['chapters'] = data['chapters']
     fileinfo['meta'] = data['format']['tags']
     fileinfo['meta']['duration'] = float(data['format']['duration'])
-    fileinfo['meta']['file_title'] = fileinfo['meta']['artist'][:30] + ' (' + fileinfo['meta']['date'][:15] + ') ' + fileinfo['meta']['title'][:80]
+    
+    # fileinfo['meta']['file_title'] = fileinfo['meta']['artist'][:30] + ' (' + fileinfo['meta']['date'][:15] + ') ' + fileinfo['meta']['title'][:80]
+    series_info = ''
+    if 'series' in fileinfo['a_meta_data']:
+      if fileinfo['a_meta_data']['series'].upper() != 'N/A':
+        series_info = ' - ' + fileinfo['a_meta_data']['series'][:30]
+    fileinfo['meta']['file_title'] = fileinfo['meta']['artist'][:30] + series_info + ' - (' + fileinfo['meta']['date'][:15] + ') - ' + fileinfo['meta']['title'][:80]
+
     fileinfo['meta']['file_title'] = re.sub('[^-a-zA-Z0-9_.() ]+', ' ', fileinfo['meta']['file_title'])
     fileinfo['meta']['title_filtered'] = re.sub(' \(Unabridged\)', '', fileinfo['meta']['title'])
     fileinfo['meta']['file_title_filtered'] = re.sub(' \(Unabridged\)', '', fileinfo['meta']['file_title'])[:240]
