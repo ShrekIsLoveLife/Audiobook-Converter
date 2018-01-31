@@ -147,7 +147,6 @@ POST BELOW THIS LINE [/code][/hide]
 [size=9pt]Title:   [color=white]{meta:title}[/color]
 Author:   [color=white]{meta:author}[/color]
 Read By:   [color=white]{meta:read_by}[/color]
-Copyright:   [color=white]{meta:copyright}[/color]
 Date:   [color=white]{meta:date}[/color]
 Publisher:   [color=white]{meta:publisher}[/color]
 Series:   [color=white]{meta:series}[/color]
@@ -188,7 +187,7 @@ General Information
 nfo_template += '{0: <25}'.format(' Title:') + '{meta:title}\n'
 nfo_template += '{0: <25}'.format(' Author:') + '{meta:author}\n'
 nfo_template += '{0: <25}'.format(' Read By:') + '{meta:read_by}\n'
-nfo_template += '{0: <25}'.format(' Copyright:') + '{meta:copyright}\n'
+# nfo_template += '{0: <25}'.format(' Copyright:') + '{meta:copyright}\n'
 nfo_template += '{0: <25}'.format(' Date:') + '{meta:date}\n'
 nfo_template += '{0: <25}'.format(' Publisher:') + '{meta:publisher}\n'
 nfo_template += '{0: <25}'.format(' Series:') + '{meta:series}\n'
@@ -480,11 +479,13 @@ def process_audiobook(filename, a_meta_data):
     if 'series' in fileinfo['a_meta_data']:
       if fileinfo['a_meta_data']['series'].upper() != 'N/A':
         series_info = ' - ' + fileinfo['a_meta_data']['series'][:30]
-    fileinfo['meta']['file_title'] = fileinfo['meta']['artist'][:30] + series_info + ' - (' + fileinfo['meta']['date'][:15] + ') - ' + fileinfo['meta']['title'][:80]
+    # fileinfo['meta']['file_title'] = fileinfo['meta']['artist'][:30] + series_info + ' - (' + fileinfo['meta']['date'][:15] + ') - ' + fileinfo['meta']['title'][:80]
+    fileinfo['meta']['file_title'] = fileinfo['meta']['artist'][:30] + ' (' + fileinfo['meta']['date'][:15] + ') ' + fileinfo['meta']['title']
 
     fileinfo['meta']['file_title'] = re.sub('[^-a-zA-Z0-9_.() ]+', ' ', fileinfo['meta']['file_title'])
     fileinfo['meta']['title_filtered'] = re.sub(' \(Unabridged\)', '', fileinfo['meta']['title'])
-    fileinfo['meta']['file_title_filtered'] = re.sub(' \(Unabridged\)', '', fileinfo['meta']['file_title'])[:240]
+    fileinfo['meta']['file_title_filtered'] = re.sub(' +', ' ', fileinfo['meta']['file_title'])
+    fileinfo['meta']['file_title_filtered'] = re.sub(' \(Unabridged\)', '', fileinfo['meta']['file_title_filtered'] )[:150]
 
     m = hashlib.md5() # ('md5', 'sha1', 'sha224', 'sha256', 'sha384', 'sha512')
     m.update("abook.ws")
@@ -566,7 +567,7 @@ def process_audiobook(filename, a_meta_data):
         processed_percent = int(round(processed / (fileinfo['meta']['num_chapters'] + 0.0) * 100, 0))
         processed += 1
         padded_num = ('%0' + zeropadct + 'd') % ( chapter['id']+1 )
-        chapter['filename'] = padded_num + ' - ' + fileinfo['meta']['file_title_filtered'] + '.mp4'
+        chapter['filename'] = padded_num + ' ' + fileinfo['meta']['file_title_filtered'] + '.mp4'
         print '\n -> (' + str(processed_percent) + '%) ' + chapter['filename']
         if (chapter['id'] == 0):
           chapter['start_time'] = '2.0' # Remove 'This is Audible' from the beginning
@@ -616,6 +617,7 @@ def process_audiobook(filename, a_meta_data):
             ]
         else:
           # lossless
+          # Manual ffmpeg -y -i "name.m4b" -vn -c:a copy -metadata title="name" -metadata track="01" -strict -2 "name.mp4"
           cmd = [
             'ffmpeg',
             '-y', 
