@@ -479,6 +479,13 @@ def process_audiobook(filename, a_meta_data):
     if 'series' in fileinfo['a_meta_data']:
       if fileinfo['a_meta_data']['series'].upper() != 'N/A':
         series_info = ' - ' + fileinfo['a_meta_data']['series'][:30]
+    
+    if 'date' not in fileinfo['meta']:
+      if 'date' in fileinfo['a_meta_data']:
+        fileinfo['meta']['date'] = fileinfo['a_meta_data']['date']
+      else:
+        fileinfo['meta']['date'] = '-'
+
     # fileinfo['meta']['file_title'] = fileinfo['meta']['artist'][:30] + series_info + ' - (' + fileinfo['meta']['date'][:15] + ') - ' + fileinfo['meta']['title'][:80]
     fileinfo['meta']['file_title'] = fileinfo['meta']['artist'][:30] + ' (' + fileinfo['meta']['date'][:15] + ') ' + fileinfo['meta']['title']
 
@@ -612,6 +619,7 @@ def process_audiobook(filename, a_meta_data):
             '-to', chapter['end_time'],
             '-metadata', 'title="' + chapter_title_escaped + '"', # I hate it when your player just says the book name and not chapter info
             '-metadata', 'track="' + str( chapter['id']+1 ) + '"',
+            '-map_chapters', '-1',
             '-strict', '-2',  # needed for some versions of ffmpeg for aac
             file_out
             ]
@@ -628,6 +636,7 @@ def process_audiobook(filename, a_meta_data):
             '-to', chapter['end_time'],
             '-metadata', 'title="' + chapter_title_escaped + '"', # I hate it when your player just says the book name and not chapter info
             '-metadata', 'track="' + str( chapter['id']+1 ) + '"',
+            '-map_chapters', '-1',
             '-strict', '-2',  # needed for some versions of ffmpeg for aac
             file_out
             ]
