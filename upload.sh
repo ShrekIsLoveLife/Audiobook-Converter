@@ -32,7 +32,7 @@ fi
 
 mkdir "${post_name}"
 mkdir "${PWD##*/}"
-mv *.nfo *.png *.jpg *.pdf *.m3u *.mp4 *.mp3 "${PWD##*/}/"
+mv *.nfo *.png *.jpg *.pdf *.m3u *.mp4 *.mp3 *.cue *.epub *.mobi "${PWD##*/}/"
 cd "${PWD##*/}/"
 mv *.forum_template.txt ../
 cd ../

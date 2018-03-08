@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 # Title:             AAX Audiobook Converter
-# Version:           v1.0 (2017-11-13)
+# Version:           v1.3 (2018-03-08)
 # Arthor:            "Shrek is Love"  BTC: 1ANyHwihu9dL2CZ9LUZ48FdYTzyz8CCCFf
 # Original Arthor:   "Shrek is Love"  BTC: 1ANyHwihu9dL2CZ9LUZ48FdYTzyz8CCCFf
 # License:           GNU GPLv3
@@ -105,7 +105,7 @@ header_file = ''' ████████████████████�
  █    ▒  ▒  ▓    ▓            ▓   ▓   █
  █    ▒  ▒  ▓    ▓            ▓   ▓   █
  █    ▒  ▒  ▓▓▓▓▓  ▓▓▓▓▓ ▓▓▓  ▓  ▓    █
- █   ▒▒▒▒▒  ▓    ▓ ▓   ▓ ▓  ▓ ▓▓▓ .ws █
+ █   ▒▒▒▒▒  ▓    ▓ ▓   ▓ ▓  ▓ ▓▓▓ .to █
  █   ▒   ▒  ▓    ▓ ▓   ▓ ▓  ▓ ▓  ▓    █
  █  ▒    ▒  ▓    ▓ ▓▓▓▓  ▓▓▓▓ ▓   ▓   █
  █  ▒    ▒  ▓▓▓▓▓             ▓   ▓   █
@@ -117,7 +117,7 @@ header_file_txt = ''' **************************************
  *    #  #  %    %            %   %   *
  *    #  #  %    %            %   %   *
  *    #  #  %%%%%  %%%%% %%%  %  %    *
- *   #####  %    % %   % %  % %%% .ws *
+ *   #####  %    % %   % %  % %%% .to *
  *   #   #  %    % %   % %  % %  %    *
  *  #    #  %    % %%%%  %%%% %   %   *
  *  #    #  %%%%%             %   %   *
@@ -134,7 +134,7 @@ Password:
 {meta:rar_passwd}
 
 Search String:
-abook.ws - {meta:instance_hash}
+abook.to - {meta:instance_hash}
 
 POST BELOW THIS LINE [/code][/hide]
 
@@ -169,10 +169,10 @@ Encoded At:   [color=white]Lossless Conversion[/color][/size]
 
 
 [color=yellow]Posted by proxy[/color]
-[color=yellow]Posted by proxy for[/color] [url=https://abook.ws/index.php?action=profile;u=][color=red]{meta:proxy_name}[/color][/url]
+[color=yellow]Posted by proxy for[/color] [url=https://kooba.pw/index.php?action=profile;u=][color=red]{meta:proxy_name}[/color][/url]
 
 
-[hide]Search: [code]abook.ws - {meta:instance_hash}[/code][/hide]
+[hide]Search: [code]abook.to - {meta:instance_hash}[/code][/hide]
 [hide]Password: [code]{meta:rar_passwd}[/code][/hide]
 
 [size=8pt][i]Note: These are not my rips. Many thanks to the original uploader(s).[/i][/size]
@@ -495,7 +495,7 @@ def process_audiobook(filename, a_meta_data):
     fileinfo['meta']['file_title_filtered'] = re.sub(' \(Unabridged\)', '', fileinfo['meta']['file_title_filtered'] )[:150]
 
     m = hashlib.md5() # ('md5', 'sha1', 'sha224', 'sha256', 'sha384', 'sha512')
-    m.update("abook.ws")
+    m.update("abook.to")
     m.update(str(time.time()))
     m.update(fileinfo['meta']['file_title_filtered'])
     fileinfo['meta']['instance_hash'] =  re.sub('[^-a-zA-Z0-9_.() ]+', '', m.digest().encode("base64").strip()) #m.hexdigest()
@@ -625,7 +625,7 @@ def process_audiobook(filename, a_meta_data):
             ]
         else:
           # lossless
-          # Manual ffmpeg -y -i "name.m4b" -vn -c:a copy -metadata title="name" -metadata track="01" -strict -2 "name.mp4"
+          # Manual ffmpeg -y -i "name.m4b" -vn -c:a copy -metadata title="name" -metadata track="01" -map_chapters -1 -strict -2 "name.mp4"
           cmd = [
             'ffmpeg',
             '-y', 
@@ -699,7 +699,7 @@ def process_audiobook(filename, a_meta_data):
       fh.close() 
 
       fh = open(os.path.join(fileinfo['meta']['file_title_filtered'], 'usenet_name.txt'), 'w')
-      fh.write('abook.ws - ' + fileinfo['meta']['instance_hash']) 
+      fh.write('abook.to - ' + fileinfo['meta']['instance_hash']) 
       fh.close() 
 
       fh = open(filename + '.processed', 'w')
@@ -707,7 +707,7 @@ def process_audiobook(filename, a_meta_data):
       fh.close()
       print '\Folder:\n' + fileinfo['meta']['file_title_filtered']
       print '\nCover:\n' + fileinfo['meta']['imgur_url']
-      print '\nSearch String:\nabook.ws - ' + fileinfo['meta']['instance_hash']
+      print '\nSearch String:\nabook.to - ' + fileinfo['meta']['instance_hash']
       print '\nDone :)\n'
       
 
