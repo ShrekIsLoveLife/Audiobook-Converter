@@ -160,7 +160,8 @@ Source Format:   [color=white]Audible[/color]
 Number of Chapters:   [color=white]{meta:chapters}[/color]
 Total Duration:   [color=white]{meta:duration_clean}[/color]
 Total Size:   [color=white]{meta:total_size}[/color]
-Encoding:   [color=white]Lossless Conversion{meta:encoded_str}[/color][/size]
+Encoding:   [color=white]Lossless Conversion
+                   {meta:encoded_str}[/color][/size]
 [/td]
 [/tr]
 [/table]
@@ -202,7 +203,7 @@ nfo_template += '{0: <25}'.format(' Source Format:') + 'Audible\n'
 nfo_template += '{0: <25}'.format(' Number of Chapters:') + '{meta:chapters}\n'
 nfo_template += '{0: <25}'.format(' Total Duration:') + '{meta:duration_clean}\n'
 nfo_template += '{0: <25}'.format(' Total Size:') + '{meta:total_size}\n'
-nfo_template += '{0: <25}'.format(' Encoding:') + 'Lossless Conversion{meta:encoded_str}\n'
+nfo_template += '{0: <25}'.format(' Encoding:') + 'Lossless Conversion {meta:encoded_str}\n'
 
 nfo_template += '''
 Book Description
@@ -480,7 +481,7 @@ def process_audiobook(filename, a_meta_data):
         fileinfo['sample_rate'] = stream['sample_rate']
         fileinfo['sample_rate_str'] = "%.2f kHz" % (int(stream['sample_rate']) / 1000.0)
         fileinfo['channel_layout'] = stream['channel_layout'].capitalize()
-        fileinfo['encoded_str'] = ' [' + fileinfo['codec_name'].upper() + ': ' +  fileinfo['bit_rate_str'] + ', ' + fileinfo['sample_rate_str'] + ', ' + fileinfo['channel_layout'] + ']'
+        fileinfo['encoded_str'] = fileinfo['codec_name'].upper() + ': ' +  fileinfo['bit_rate_str'] + ', ' + fileinfo['sample_rate_str'] + ', ' + fileinfo['channel_layout']
         print fileinfo['encoded_str']
         break
 
