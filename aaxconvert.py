@@ -477,7 +477,7 @@ def process_audiobook(filename, a_meta_data):
       if stream['codec_type'] == 'audio':
         fileinfo['codec_name'] = stream['codec_name']
         fileinfo['bit_rate'] = stream['bit_rate']
-        fileinfo['bit_rate_str'] = "%.2f kHz" % (int(stream['bit_rate']) / 1000.0)
+        fileinfo['bit_rate_str'] = "%.2f kbps" % (int(stream['bit_rate']) / 1000.0)
         fileinfo['sample_rate'] = stream['sample_rate']
         fileinfo['sample_rate_str'] = "%.2f kHz" % (int(stream['sample_rate']) / 1000.0)
         fileinfo['channel_layout'] = stream['channel_layout'].capitalize()
