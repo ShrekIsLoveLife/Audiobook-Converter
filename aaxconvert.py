@@ -126,6 +126,8 @@ header_file_txt = ''' **************************************
 nfo_post_template = '''
 
 [hide][code]    DON'T POST THIS PART
+Tabbed:
+{meta:author_plain}\t{meta:title_filtered}\t{meta:series_formatted}\t{meta:date_orig}\tabook.to - {meta:instance_hash}\t{meta:rar_passwd}
 
 Subject:
 {meta:author_plain} - {meta:title_filtered} ({meta:date_orig}) {meta:series_formatted}
@@ -158,7 +160,7 @@ Source Format:   [color=white]Audible[/color]
 Number of Chapters:   [color=white]{meta:chapters}[/color]
 Total Duration:   [color=white]{meta:duration_clean}[/color]
 Total Size:   [color=white]{meta:total_size}[/color]
-Encoded At:   [color=white]Lossless Conversion[/color][/size]
+Encoding:   [color=white]Lossless Conversion{meta:encoded_str}[/color][/size]
 [/td]
 [/tr]
 [/table]
@@ -169,7 +171,7 @@ Encoded At:   [color=white]Lossless Conversion[/color][/size]
 
 
 [color=yellow]Posted by proxy[/color]
-[color=yellow]Posted by proxy for[/color] [url=https://kooba.pw/index.php?action=profile;u=][color=red]{meta:proxy_name}[/color][/url]
+[color=yellow]Posted by proxy for[/color] [url=/index.php?action=profile;u=][color=red]{meta:proxy_name}[/color][/url]
 
 
 [hide]Search: [code]abook.to - {meta:instance_hash}[/code][/hide]
@@ -200,7 +202,7 @@ nfo_template += '{0: <25}'.format(' Source Format:') + 'Audible\n'
 nfo_template += '{0: <25}'.format(' Number of Chapters:') + '{meta:chapters}\n'
 nfo_template += '{0: <25}'.format(' Total Duration:') + '{meta:duration_clean}\n'
 nfo_template += '{0: <25}'.format(' Total Size:') + '{meta:total_size}\n'
-nfo_template += '{0: <25}'.format(' Encoded At:') + 'Lossless Conversion\n'
+nfo_template += '{0: <25}'.format(' Encoding:') + 'Lossless Conversion{meta:encoded_str}\n'
 
 nfo_template += '''
 Book Description
@@ -210,7 +212,7 @@ Book Description
 
 print ''
 print header_file
-print '      AAX Audiobook Converter v1.0\n         By "Shrek is Love"\nBTC: 1ANyHwihu9dL2CZ9LUZ48FdYTzyz8CCCFf\n'
+print '      AAX Audiobook Converter v1.3\n         By "Shrek is Love"\nBTC: 1ANyHwihu9dL2CZ9LUZ48FdYTzyz8CCCFf\n'
 
 prevlinect = 0
 prevline = ''
@@ -420,6 +422,7 @@ def replace_nfo_vars(nfo_file, fileinfo, is_template=False):
       nfo_file = re.sub(r'{meta:series}', 'N/A', nfo_file)
       nfo_file = re.sub(r'{meta:series_formatted}', '', nfo_file)
     
+    nfo_file = re.sub(r'{meta:encoded_str}', fileinfo['encoded_str'], nfo_file)
     nfo_file = re.sub(r'{meta:album}', fileinfo['meta']['album'], nfo_file)
     nfo_file = re.sub(r'{meta:album_artist}', fileinfo['meta']['album_artist'], nfo_file)
     nfo_file = re.sub(r'{meta:series_position}', fileinfo['meta']['series_position'], nfo_file)
@@ -457,7 +460,6 @@ def process_audiobook(filename, a_meta_data):
       '.' )
 
   fileinfo = {}
-
   if exitcode == 0:
     if a_meta_data['type'] == 'aax':
       # checksum is provided in stderr
@@ -469,6 +471,19 @@ def process_audiobook(filename, a_meta_data):
         return
 
     data = json.loads(out)
+    fileinfo['encoded_str'] = ''
+    for stream in data['streams']:
+      if stream['codec_type'] == 'audio':
+        fileinfo['codec_name'] = stream['codec_name']
+        fileinfo['bit_rate'] = stream['bit_rate']
+        fileinfo['bit_rate_str'] = "%.2f kHz" % (int(stream['bit_rate']) / 1000.0)
+        fileinfo['sample_rate'] = stream['sample_rate']
+        fileinfo['sample_rate_str'] = "%.2f kHz" % (int(stream['sample_rate']) / 1000.0)
+        fileinfo['channel_layout'] = stream['channel_layout'].capitalize()
+        fileinfo['encoded_str'] = ' [' + fileinfo['codec_name'].upper() + ': ' +  fileinfo['bit_rate_str'] + ', ' + fileinfo['sample_rate_str'] + ', ' + fileinfo['channel_layout'] + ']'
+        print fileinfo['encoded_str']
+        break
+
     fileinfo['a_meta_data'] = a_meta_data
     fileinfo['chapters'] = data['chapters']
     fileinfo['meta'] = data['format']['tags']
