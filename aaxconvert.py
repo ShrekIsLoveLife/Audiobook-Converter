@@ -62,7 +62,7 @@
 #        sudo add-apt-repository ppa:jonathonf/tesseract # for ubuntu 14.x 
 #        sudo apt update && sudo apt upgrade, eh maybe just install ffmpeg package
 #     * inAudible-NG Tables: (git clone https://github.com/inAudible-NG/tables.git)
-#        tables needs to be a folder in the path of decode.py and rcrack needs +x
+#        tables needs to be a folder in the path of aaxconvert.py and rcrack needs +x
 #        I believe the rcrack included is 64bit, you may need 32bit if your system is not 64bit.
 
 # To-Do concepts:
