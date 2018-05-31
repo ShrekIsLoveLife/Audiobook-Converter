@@ -180,7 +180,10 @@ def process_file(filename):
         break
 
     fileinfo['chapters'] = data['chapters']
-    fileinfo['meta'] = data['format']['tags']
+    if 'tags' in data['format']:
+      fileinfo['meta'] = data['format']['tags']
+    else:
+      fileinfo['meta'] = {}
     fileinfo['meta']['duration'] = float(data['format']['duration'])
     
 
