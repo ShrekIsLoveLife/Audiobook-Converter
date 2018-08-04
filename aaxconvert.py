@@ -91,7 +91,7 @@ import sys, re, os, errno, math
 from subprocess import Popen, PIPE
 import subprocess
 import json, hashlib, time, datetime, timeit
-# from pprint import pprint
+from pprint import pprint
 import gzip, cPickle
 
 import urllib2, urllib, base64
@@ -622,6 +622,8 @@ def process_audiobook(filename, a_meta_data):
         #   file_out
         #   ]
         #
+
+
         if a_meta_data['type'] == 'aax':
           # lossless
           cmd = [
@@ -633,9 +635,10 @@ def process_audiobook(filename, a_meta_data):
             '-c:a', 'copy',
              '-ss', chapter['start_time'],
             '-to', chapter['end_time'],
-            '-metadata', 'title="' + chapter_title_escaped + '"', # I hate it when your player just says the book name and not chapter info
-            '-metadata', 'track="' + str( chapter['id']+1 ) + '"',
             '-map_chapters', '-1',
+            '-metadata', 'title="' + chapter_title_escaped + '"', # I hate it when your player just says the book name and not chapter info
+            '-metadata', 'track="' + str( chapter['id']+1 ) + '/' + str(fileinfo['meta']['num_chapters']) + '"',
+            '-metadata', 'episode="' + str( chapter['id']+1 ) + '"',
             '-strict', '-2',  # needed for some versions of ffmpeg for aac
             file_out
             ]
@@ -650,9 +653,10 @@ def process_audiobook(filename, a_meta_data):
             '-c:a', 'copy',
              '-ss', chapter['start_time'],
             '-to', chapter['end_time'],
-            '-metadata', 'title="' + chapter_title_escaped + '"', # I hate it when your player just says the book name and not chapter info
-            '-metadata', 'track="' + str( chapter['id']+1 ) + '"',
             '-map_chapters', '-1',
+            '-metadata', 'title="' + chapter_title_escaped + '"', # I hate it when your player just says the book name and not chapter info
+            '-metadata', 'track="' + str( chapter['id']+1 ) + '/' + str(fileinfo['meta']['num_chapters']) + '"',
+            '-metadata', 'episode="' + str( chapter['id']+1 ) + '"',
             '-strict', '-2',  # needed for some versions of ffmpeg for aac
             file_out
             ]
@@ -665,7 +669,21 @@ def process_audiobook(filename, a_meta_data):
           print 'Error: Something went wrong, I could not fild the file we just created "' + chapter['filename'] + '"'
           return
         # break # debug single track
-      print 'Creating m3u...'
+        # AtomicParsley file --tracknum 5/30 --TVEpisodeNum 5 --overWrite
+        print 'Adding track meta...'
+        exitcode, out, err = run_get_exitcode_stdout_stderr([
+          'AtomicParsley',
+          file_out, 
+          '--tracknum',
+          str( chapter['id']+1 ) + '/' + str(fileinfo['meta']['num_chapters']),
+          '--TVEpisodeNum',
+          str( chapter['id']+1 ),
+          '--overWrite'
+          ], 
+          '.' )
+        # print out
+
+        print 'Creating m3u...'
       fh = open(os.path.join(fileinfo['meta']['file_title_filtered'],fileinfo['meta']['file_title_filtered'] + '.m3u'), 'w')
       fh.write(m3u) # Write out utf8 txt
       fh.close() 
