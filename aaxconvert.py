@@ -65,6 +65,31 @@
 #        tables needs to be a folder in the path of aaxconvert.py and rcrack needs +x
 #        I believe the rcrack included is 64bit, you may need 32bit if your system is not 64bit.
 
+# Install:
+#     * sudo apt update 
+#     * sudo apt install build-essential git software-properties-common python-software-properties python2.7
+#     * sudo apt-add-repository multiverse
+#     * sudo add-apt-repository ppa:jcfp/sab-addons
+#     * sudo add-apt-repository ppa:jonathonf/ffmpeg-3
+#     * sudo apt-get update
+#     * sudo apt install atomicparsley cksfv rar unrar p7zip-full ffmpeg par2-tbb
+#        * use part instead of par2-tbb for single core par
+#     * mkdir -p /opt/storage/dev/
+#     * cd /opt/storage/dev/
+#     * git clone --recurse-submodules https://github.com/ShrekIsLoveLife/Audiobook-Converter.git
+#     * cd Audiobook-Converter
+#     * mkdir -p /opt/storage/aax/
+#     * cd /opt/storage/aax/
+#     * /opt/storage/dev/Audiobook-Converter/install_here.sh
+#     * EDIT /opt/storage/aax/rar.passwd
+#     * Place https://github.com/ShrekIsLoveLife/gopoststuff-abook/raw/master/sample.gopoststuff.conf as ~/.gopoststuff.conf and edit it
+#     * # I like to make a tmpfs/ram disk to do processing on to speed things up
+#     * mkdir /opt/storage/aax/tmpfs1
+#     * sudo mount -t tmpfs -o size=8192m tmpfs /opt/storage/aax/tmpfs1
+
+
+
+
 # To-Do concepts:
 #     * cache activation bytes - not sure if needed, hopefully this is a one time thing for the conversion
 #     * activation bytes cli argument - I'll probably add this soon, it seems like a decent feature
@@ -567,6 +592,8 @@ def process_audiobook(filename, a_meta_data):
             fileinfo['checksum'],
             ], 
             tdir )
+        print out
+        print err
         if exitcode == 0:
           matchObj = re.search( r'hex:(.*?)$', out, re.M|re.I)
           if matchObj:
