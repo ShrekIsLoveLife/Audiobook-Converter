@@ -1,10 +1,9 @@
 #!/usr/bin/env bash
 
-# get script directory
+
 SOURCE="${BASH_SOURCE[0]}"
 DIR_LN="$( cd -P "$( dirname "$SOURCE" )" && pwd )"
 PWD="$(pwd)"
-# echo ${DIR_LN}
 
 sudo apt update 
 sudo apt install build-essential git software-properties-common python-software-properties python2.7
@@ -39,9 +38,3 @@ fi
 #     * mkdir /opt/storage/aax/tmpfs1
 #     * sudo mount -t tmpfs -o size=8192m tmpfs /opt/storage/aax/tmpfs1
 
-# I find rcrack does not seem to work on openvz ubuntu 16
-# ./rcrack . -h e05f5a2d96dc623dd07dc620d2cca77d782f455d
-# git clone https://github.com/inAudible-NG/tables.git
-# ./rcrack /opt/storage/dev/Audiobook-Converter/tables/ -h e05f5a2d96dc623dd07dc620d2cca77d782f455d
-# alias wgeti='wget --no-check-certificate '
-# wgeti 'https://github.com/inAudible-NG/tables/archive/master.zip'
