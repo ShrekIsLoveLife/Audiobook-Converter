@@ -14,16 +14,6 @@ sudo apt-get update
 sudo apt install atomicparsley cksfv rar unrar p7zip-full ffmpeg par2-tbb mplayer
 
 git clone https://github.com/inAudible-NG/tables.git "${DIR_LN}/tables"
-ln -s "${DIR_LN}/aaxconvert.py"
-ln -s "${DIR_LN}/duration.sh"
-ln -s "${DIR_LN}/fileinfo.py"
-ln -s "${DIR_LN}/gopoststuff-abook"
-ln -s "${DIR_LN}/np_upload.sh"
-ln -s "${DIR_LN}/upload.sh"
-ln -s "${DIR_LN}/z_convert_all.sh"
-# ln -s "${DIR_LN}/tables" tables
-mkdir tables
-sudo mount -o bind "${DIR_LN}/tables" /opt/storage/aax/tables
 
 if [ ! -f rar.passwd ]; then
   echo '{change_me at rar.passwd}' > rar.passwd
@@ -35,6 +25,7 @@ if [ ! -f ~/.gopoststuff.conf ]; then
 fi
 
 #     * # I like to make a tmpfs/ram disk to do processing on to speed things up
-#     * mkdir /opt/storage/aax/tmpfs1
-#     * sudo mount -t tmpfs -o size=8192m tmpfs /opt/storage/aax/tmpfs1
+#     * mkdir /opt/ramdisk1
+#     * sudo mount -t tmpfs -o size=8192m tmpfs /opt/ramdisk1
+#     * Then run install_links.sh in this folder
 
