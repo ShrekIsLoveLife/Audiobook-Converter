@@ -5,25 +5,21 @@ SOURCE="${BASH_SOURCE[0]}"
 DIR_LN="$( cd -P "$( dirname "$SOURCE" )" && pwd )"
 PWD="$(pwd)"
 
-sudo apt update 
-sudo apt install build-essential git software-properties-common python-software-properties python2.7
-sudo apt-add-repository multiverse
-sudo add-apt-repository ppa:jcfp/sab-addons
-sudo add-apt-repository ppa:jonathonf/ffmpeg-3
-sudo apt-get update
-sudo apt install atomicparsley cksfv rar unrar p7zip-full ffmpeg par2-tbb mplayer
-
-git clone https://github.com/inAudible-NG/tables.git "${DIR_LN}/tables"
+touch "${DIR_LN}/activation_bytes.cache"
+ln -s "${DIR_LN}/activation_bytes.cache"
 ln -s "${DIR_LN}/aaxconvert.py"
 ln -s "${DIR_LN}/duration.sh"
 ln -s "${DIR_LN}/fileinfo.py"
 ln -s "${DIR_LN}/gopoststuff-abook"
 ln -s "${DIR_LN}/np_upload.sh"
+ln -s "${DIR_LN}/_upload.sh"
 ln -s "${DIR_LN}/upload.sh"
 ln -s "${DIR_LN}/z_convert_all.sh"
 # ln -s "${DIR_LN}/tables" tables
 mkdir tables
-sudo mount -o bind "${DIR_LN}/tables" /opt/storage/aax/tables
+mkdir tmp
+#sudo mount -o bind "${DIR_LN}/tables" /opt/storage/aax/tables
+sudo mount -o bind "${DIR_LN}/tables" tables
 
 if [ ! -f rar.passwd ]; then
   echo '{change_me at rar.passwd}' > rar.passwd

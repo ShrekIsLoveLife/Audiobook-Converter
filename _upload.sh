@@ -29,18 +29,7 @@ else
 fi
 
 
-
-mkdir "${post_name}"
-mkdir "${PWD##*/}"
-mv *.nfo *.png *.jpg *.pdf *.m3u *.mp4 *.mp3 *.cue *.epub *.mobi "${PWD##*/}/"
-cd "${PWD##*/}/"
-mv *.forum_template.txt ../
-cd ../
-rar a -m1 -v15m -hp"${post_pass}" -x"*.forum_template.txt" "${post_name}/${post_name}.rar" "${PWD##*/}"
-
 cd "${post_name}"
-par2 c -r15 -l -a "${post_name}" *.rar
-cksfv *.rar > "${post_name}.sfv"
 
 cd ../
 ${DIR}/gopoststuff-abook -v -g 'alt.binaries.mp3.abooks' -nzb "${post_name}.nzb" -rarpw "${post_name}" -d "${post_name}"

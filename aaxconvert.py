@@ -710,7 +710,7 @@ def process_audiobook(filename, a_meta_data):
           '.' )
         # print out
 
-        print 'Creating m3u...'
+      print 'Creating m3u...'
       fh = open(os.path.join(fileinfo['meta']['file_title_filtered'],fileinfo['meta']['file_title_filtered'] + '.m3u'), 'w')
       fh.write(m3u) # Write out utf8 txt
       fh.close() 
