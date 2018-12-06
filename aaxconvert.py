@@ -781,7 +781,7 @@ if __name__ == "__main__":
 
   if len(sys.argv) == 2:
     if len(sys.argv[1]) >= 4:
-      if sys.argv[1][-4:].lower() == '.aax' or sys.argv[1][-4:].lower() == '.m4b' :
+      if sys.argv[1][-4:].lower() == '.aax' or sys.argv[1][-4:].lower() == '.m4b'  or sys.argv[1][-4:].lower() == '.m4a' :
         if os.path.isfile(sys.argv[1]):
           print "Input = " + sys.argv[1]
           if not os.path.isfile(sys.argv[1] + '.processed'):

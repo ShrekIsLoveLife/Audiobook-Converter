@@ -12,7 +12,7 @@ done
 DIR="$( cd -P "$( dirname "$SOURCE" )" && pwd )"
 
 
-for f in *.{aax,m4b}; do
+for f in *.{aax,m4b,m4a}; do
   echo "$f"
   ${DIR_LN}/aaxconvert.py "$f"
 done
