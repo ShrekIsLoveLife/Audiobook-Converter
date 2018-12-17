@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 # for par2 multi-core install https://sabnzbd.org/wiki/installation/multicore-par2
 
+export TMPDIR=/opt/ramdisk/sys_tmp/
+
 # get script directory
 SOURCE="${BASH_SOURCE[0]}"
 DIR_LN="$( cd -P "$( dirname "$SOURCE" )" && pwd )"

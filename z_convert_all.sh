@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+export TMPDIR=/opt/ramdisk/sys_tmp/
+
 # get script directory
 SOURCE="${BASH_SOURCE[0]}"
 DIR_LN="$( cd -P "$( dirname "$SOURCE" )" && pwd )"

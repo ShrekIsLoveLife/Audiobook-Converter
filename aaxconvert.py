@@ -650,9 +650,12 @@ def process_audiobook(filename, a_meta_data):
         #   ]
         #
 
+        # maybe look into https://ffmpeg.org/ffmpeg-filters.html#trim 
 
         if a_meta_data['type'] == 'aax':
           # lossless
+          # ffmpeg -y -activation_bytes xxxxx -i filename -vn -c:a copy -c:v copy -map_chapters -1 -strict -2 file_out
+          # ffmpeg -y -activation_bytes xxxxx -i 'xxxx.mp4' -vn -c:a copy -c:v copy -ss xxx.117642 -to xxx.034830 -map_chapters -1 -strict -2 'test_x.mp4'
           cmd = [
             'ffmpeg',
             '-y', 
@@ -660,6 +663,7 @@ def process_audiobook(filename, a_meta_data):
             '-i', filename, 
             '-vn',
             '-c:a', 'copy',
+            '-c:v', 'copy',
              '-ss', chapter['start_time'],
             '-to', chapter['end_time'],
             '-map_chapters', '-1',
@@ -669,6 +673,30 @@ def process_audiobook(filename, a_meta_data):
             '-strict', '-2',  # needed for some versions of ffmpeg for aac
             file_out
             ]
+
+          # trying to enhance speed by not using exact framing
+          # time ffmpeg -y -activation_bytes xxx -ss 95743.117642  -i 'test.mp4' -vn -c:a copy -c:v copy -ss 0 -to 640.917188 -map_chapters -1 -strict -2 'test_z.mp4'
+          if float(chapter['start_time']) > 120:
+            print('using fastseek 30')
+            fast_seek_offset = 30.0
+            cmd = [
+              'ffmpeg',
+              '-y', 
+              '-activation_bytes', fileinfo['activation_bytes'], 
+               '-ss', str(float(chapter['start_time']) - fast_seek_offset),
+              '-i', filename, 
+              '-vn',
+              '-c:a', 'copy',
+              '-c:v', 'copy',
+              '-ss', str(fast_seek_offset),
+              '-to', str(chapter['duration'] + fast_seek_offset),
+              '-map_chapters', '-1',
+              '-metadata', 'title="' + chapter_title_escaped + '"', # I hate it when your player just says the book name and not chapter info
+              '-metadata', 'track="' + str( chapter['id']+1 ) + '/' + str(fileinfo['meta']['num_chapters']) + '"',
+              '-metadata', 'episode="' + str( chapter['id']+1 ) + '"',
+              '-strict', '-2',  # needed for some versions of ffmpeg for aac
+              file_out
+              ]
         else:
           # lossless
           # Manual ffmpeg -y -i "name.m4b" -vn -c:a copy -metadata title="name" -metadata track="01" -map_chapters -1 -strict -2 "name.mp4"
@@ -678,6 +706,7 @@ def process_audiobook(filename, a_meta_data):
             '-i', filename, 
             '-vn',
             '-c:a', 'copy',
+            '-c:v', 'copy',
              '-ss', chapter['start_time'],
             '-to', chapter['end_time'],
             '-map_chapters', '-1',
@@ -687,6 +716,29 @@ def process_audiobook(filename, a_meta_data):
             '-strict', '-2',  # needed for some versions of ffmpeg for aac
             file_out
             ]
+
+          # trying to enhance speed by not using exact framing
+          # time ffmpeg -y -activation_bytes xxx -ss 95743.117642  -i 'test.mp4' -vn -c:a copy -c:v copy -ss 0 -to 640.917188 -map_chapters -1 -strict -2 'test_z.mp4'
+          if float(chapter['start_time']) > 120:
+            print('using fastseek 30')
+            fast_seek_offset = 30.0
+            cmd = [
+              'ffmpeg',
+              '-y', 
+               '-ss', str(float(chapter['start_time']) - fast_seek_offset),
+              '-i', filename, 
+              '-vn',
+              '-c:a', 'copy',
+              '-c:v', 'copy',
+              '-ss', str(fast_seek_offset),
+              '-to', str(chapter['duration'] + fast_seek_offset),
+              '-map_chapters', '-1',
+              '-metadata', 'title="' + chapter_title_escaped + '"', # I hate it when your player just says the book name and not chapter info
+              '-metadata', 'track="' + str( chapter['id']+1 ) + '/' + str(fileinfo['meta']['num_chapters']) + '"',
+              '-metadata', 'episode="' + str( chapter['id']+1 ) + '"',
+              '-strict', '-2',  # needed for some versions of ffmpeg for aac
+              file_out
+              ]
 
         chapter['process_start_time'] = timeit.default_timer()
         # exitcode, out, err = run_get_exitcode_stdout_stderr(cmd, '.'); print exitcode, out, err # debug version
