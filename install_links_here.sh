@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 
+# mount -t tmpfs -o size=9g tmpfs /opt/ramdisk/ && chown -R shrek: /opt/ramdisk && chmod -R 755 /opt/ramdisk/
 
 SOURCE="${BASH_SOURCE[0]}"
 DIR_LN="$( cd -P "$( dirname "$SOURCE" )" && pwd )"
@@ -16,13 +17,14 @@ ln -s "${DIR_LN}/gopoststuff-abook"
 ln -s "${DIR_LN}/np_upload.sh"
 ln -s "${DIR_LN}/_upload.sh"
 ln -s "${DIR_LN}/upload.sh"
+ln -s "${DIR_LN}/upload_nyuu.sh"
 ln -s "${DIR_LN}/z_convert_all.sh"
 # ln -s "${DIR_LN}/tables" tables
 mkdir tables
 mkdir tmp
 #sudo mount -o bind "${DIR_LN}/tables" /opt/storage/aax/tables
 sudo mount -o bind "${DIR_LN}/tables" tables
-
+mkdir sys_tmp
 
 if [ -f "${DIR_LN}/rar.passwd" ]; then
   ln -s "${DIR_LN}/rar.passwd"

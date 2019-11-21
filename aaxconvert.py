@@ -2,9 +2,9 @@
 # -*- coding: utf-8 -*-
 
 # Title:             AAX Audiobook Converter
-# Version:           v1.3 (2018-03-08)
-# Arthor:            "Shrek is Love"  BTC: 1ANyHwihu9dL2CZ9LUZ48FdYTzyz8CCCFf
-# Original Arthor:   "Shrek is Love"  BTC: 1ANyHwihu9dL2CZ9LUZ48FdYTzyz8CCCFf
+# Version:           v1.4 (2019-11-12)
+# Arthor:            "[Shrek]"  BTC: 1ANyHwihu9dL2CZ9LUZ48FdYTzyz8CCCFf
+# Original Arthor:   "[Shrek]"  BTC: 1ANyHwihu9dL2CZ9LUZ48FdYTzyz8CCCFf
 # License:           GNU GPLv3
 
 # Features:
@@ -91,8 +91,6 @@
 
 
 # To-Do concepts:
-#     * cache activation bytes - not sure if needed, hopefully this is a one time thing for the conversion
-#     * activation bytes cli argument - I'll probably add this soon, it seems like a decent feature
 #     * continue where left off - Hopefully pause/resume is not needed, but may want to add support
 #     * adjustable encode settings - eh, maybe they will just modify this source, eh, let them do lossless conversion
 #     * config file - for reusing settings and reducing cli length
@@ -124,35 +122,35 @@ import urllib2, urllib, base64
 reload(sys)  
 sys.setdefaultencoding('utf8')
 
-header_file = ''' ██████████████████████████████████████
- █     ▒▒   ▓▓▓▓▓                     █
- █    ▒  ▒  ▓    ▓                    █
- █    ▒  ▒  ▓    ▓            ▓   ▓   █
- █    ▒  ▒  ▓    ▓            ▓   ▓   █
- █    ▒  ▒  ▓▓▓▓▓  ▓▓▓▓▓ ▓▓▓  ▓  ▓    █
- █   ▒▒▒▒▒  ▓    ▓ ▓   ▓ ▓  ▓ ▓▓▓ .to █
- █   ▒   ▒  ▓    ▓ ▓   ▓ ▓  ▓ ▓  ▓    █
- █  ▒    ▒  ▓    ▓ ▓▓▓▓  ▓▓▓▓ ▓   ▓   █
- █  ▒    ▒  ▓▓▓▓▓             ▓   ▓   █
- ██████████████████████████████████████'''
+header_file = '''                  ▄▄▄▄▄▄▄▄▄
+             ▄▄███████████████▄▄
+           ▄████▀▀          ▀▀████▄
+       ▐▄▄  ▀▀                  ▀▀  ▄▄▌
+       ▐██████▄                ▄██████▌
+       ▐█████████▄          ▄█████████▌
+     ▌ ▐█████████████▄  ▄█████████████▌ ▐
+    █▌  ▀████████████████████████████▀  ▐█
+    ██▄▄  ▐█████████████████████████  ▄▄██
+ ▄█ █████  ██████ abook.link ██████▌ █████  █▄
+▐██▌█████  ████████████████████████▌ █████ ▐██▌
+▐██▌█████  █████ ... for your █████▌ █████ ▐██▌
+▐██▌█████  ██ listening pleasure ██▌ █████ ▐██▌
+▐██▌█████  ████████████████████████▌ █████ ▐██▌
+    ▐████  ████████████████████████▌ █████
+         ▄██████████████████████████▄
+          ▀████████████████████████▀
+             ▀██████████████████▀
+               ▀██████████████▀
+                  ▀▀██████▀▀
+'''
 
-header_file_txt = ''' **************************************
- *     ##   %%%%%                     *
- *    #  #  %    %                    *
- *    #  #  %    %            %   %   *
- *    #  #  %    %            %   %   *
- *    #  #  %%%%%  %%%%% %%%  %  %    *
- *   #####  %    % %   % %  % %%% .to *
- *   #   #  %    % %   % %  % %  %    *
- *  #    #  %    % %%%%  %%%% %   %   *
- *  #    #  %%%%%             %   %   *
- **************************************'''
+header_file_txt = header_file
 
 nfo_post_template = '''
 
 [hide][code]    DON'T POST THIS PART
 Tabbed:
-{meta:author_plain}\t{meta:title_filtered}\t{meta:series_formatted}\t{meta:date_orig}\tabook.to - {meta:instance_hash}\t{meta:rar_passwd}
+{meta:author_plain}\t{meta:title_filtered}\t{meta:series_formatted}\t{meta:date_orig}\tabook.link - {meta:instance_hash}\t{meta:rar_passwd}
 
 Subject:
 {meta:author_plain} - {meta:title_filtered} ({meta:date_orig}) {meta:series_formatted}
@@ -161,7 +159,7 @@ Password:
 {meta:rar_passwd}
 
 Search String:
-abook.to - {meta:instance_hash}
+abook.link - {meta:instance_hash}
 
 POST BELOW THIS LINE [/code][/hide]
 
@@ -200,8 +198,8 @@ Encoding:   [color=white]Lossless Conversion
 [color=yellow]Posted by proxy for[/color] [url=/index.php?action=profile;u=][color=red]{meta:proxy_name}[/color][/url]
 
 
-[hide]Search: [code]abook.to - {meta:instance_hash}[/code][/hide]
-[hide]Password: [code]{meta:rar_passwd}[/code][/hide]
+[hide thanked=1]Search: [code]abook.link - {meta:instance_hash}[/code]
+Password: [code]{meta:rar_passwd}[/code][/hide]
 
 [size=8pt][i]Note: These are not my rips. Many thanks to the original uploader(s).[/i][/size]
 '''
@@ -238,7 +236,7 @@ Book Description
 
 print ''
 print header_file
-print '      AAX Audiobook Converter v1.3\n         By "Shrek is Love"\nBTC: 1ANyHwihu9dL2CZ9LUZ48FdYTzyz8CCCFf\n'
+print '      AAX Audiobook Converter v1.4\n         By "[Shrek]"\nBTC: 1ANyHwihu9dL2CZ9LUZ48FdYTzyz8CCCFf\n'
 
 prevlinect = 0
 prevline = ''
@@ -515,6 +513,17 @@ def process_audiobook(filename, a_meta_data):
     fileinfo['meta'] = data['format']['tags']
     fileinfo['meta']['duration'] = float(data['format']['duration'])
     
+    fileinfo['meta']['last_chapter_end'] = float(fileinfo['chapters'][-1]['end_time'])
+    if (fileinfo['meta']['last_chapter_end'] != fileinfo['meta']['duration']):
+      print '\n\nERROR: Duration does not match last chapter end!\n'
+      print 'The File Duration is: ' + str(fileinfo['meta']['duration']) + 's'
+      print 'Last Chapter Ends at: ' + str(fileinfo['meta']['last_chapter_end']) + 's'
+      print '\nIf this is only off by a fraction of a second, it\'s probable safe to continue'
+      if (raw_input('\nWould you like to continue? (y/N): ').strip().lower() != 'y'):
+        print '\tResponse not Y, exiting...'
+        sys.exit(1)
+
+
     # fileinfo['meta']['file_title'] = fileinfo['meta']['artist'][:30] + ' (' + fileinfo['meta']['date'][:15] + ') ' + fileinfo['meta']['title'][:80]
     series_info = ''
     if 'series' in fileinfo['a_meta_data']:
@@ -536,7 +545,7 @@ def process_audiobook(filename, a_meta_data):
     fileinfo['meta']['file_title_filtered'] = re.sub(' \(Unabridged\)', '', fileinfo['meta']['file_title_filtered'] )[:150]
 
     m = hashlib.md5() # ('md5', 'sha1', 'sha224', 'sha256', 'sha384', 'sha512')
-    m.update("abook.to")
+    m.update("abook.link")
     m.update(str(time.time()))
     m.update(fileinfo['meta']['file_title_filtered'])
     fileinfo['meta']['instance_hash'] =  re.sub('[^-a-zA-Z0-9_.() ]+', '', m.digest().encode("base64").strip()) #m.hexdigest()
@@ -677,7 +686,7 @@ def process_audiobook(filename, a_meta_data):
           # trying to enhance speed by not using exact framing
           # time ffmpeg -y -activation_bytes xxx -ss 95743.117642  -i 'test.mp4' -vn -c:a copy -c:v copy -ss 0 -to 640.917188 -map_chapters -1 -strict -2 'test_z.mp4'
           if float(chapter['start_time']) > 120:
-            print('using fastseek 30')
+            # print('using fastseek 30')
             fast_seek_offset = 30.0
             cmd = [
               'ffmpeg',
@@ -720,7 +729,7 @@ def process_audiobook(filename, a_meta_data):
           # trying to enhance speed by not using exact framing
           # time ffmpeg -y -activation_bytes xxx -ss 95743.117642  -i 'test.mp4' -vn -c:a copy -c:v copy -ss 0 -to 640.917188 -map_chapters -1 -strict -2 'test_z.mp4'
           if float(chapter['start_time']) > 120:
-            print('using fastseek 30')
+            # print('using fastseek 30')
             fast_seek_offset = 30.0
             cmd = [
               'ffmpeg',
@@ -793,13 +802,13 @@ def process_audiobook(filename, a_meta_data):
       print 'Creating base NFO files...'
       nfo_file = replace_nfo_vars(nfo_template, fileinfo, False)
       nfo_file = re.sub(r'&#169;', '(c)', nfo_file)
-      fh = open(os.path.join(fileinfo['meta']['file_title_filtered'],fileinfo['meta']['file_title_filtered'] + '.nfo'), 'w')
-      # fh.write((header_file + nfo_file).encode("cp437", errors='replace')) # Write out proper NFO file
-      fh.write((header_file + nfo_file).encode("cp437", errors='ignore')) # Write out proper NFO file
-      fh.close() 
-      # fh = open(os.path.join(fileinfo['meta']['file_title_filtered'],fileinfo['meta']['file_title_filtered'] + '.utf8.txt'), 'w')
-      # fh.write(header_file + nfo_file) # Write out utf8 txt
+      # fh = open(os.path.join(fileinfo['meta']['file_title_filtered'],fileinfo['meta']['file_title_filtered'] + '.nfo'), 'w')
+      # # fh.write((header_file + nfo_file).encode("cp437", errors='replace')) # Write out proper NFO file
+      # fh.write((header_file + nfo_file).encode("cp437", errors='ignore')) # Write out proper NFO file
       # fh.close() 
+      fh = open(os.path.join(fileinfo['meta']['file_title_filtered'],fileinfo['meta']['file_title_filtered'] + '.nfo'), 'w')
+      fh.write((header_file + nfo_file).encode("utf-8", errors='ignore')) # Write out utf8 txt
+      fh.close() 
       # fh = open(os.path.join(fileinfo['meta']['file_title_filtered'],fileinfo['meta']['file_title_filtered'] + '.txt'), 'w')
       # fh.write(header_file_txt + nfo_file) # Write out utf8 txt
       # fh.close() 
@@ -812,7 +821,7 @@ def process_audiobook(filename, a_meta_data):
       fh.close() 
 
       fh = open(os.path.join(fileinfo['meta']['file_title_filtered'], 'usenet_name.txt'), 'w')
-      fh.write('abook.to - ' + fileinfo['meta']['instance_hash']) 
+      fh.write('abook.link - ' + fileinfo['meta']['instance_hash']) 
       fh.close() 
 
       fh = open(filename + '.processed', 'w')
@@ -820,7 +829,7 @@ def process_audiobook(filename, a_meta_data):
       fh.close()
       print '\Folder:\n' + fileinfo['meta']['file_title_filtered']
       print '\nCover:\n' + fileinfo['meta']['imgur_url']
-      print '\nSearch String:\nabook.to - ' + fileinfo['meta']['instance_hash']
+      print '\nSearch String:\nabook.link - ' + fileinfo['meta']['instance_hash']
       print '\nDone :)\n'
       
 

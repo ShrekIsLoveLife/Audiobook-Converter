@@ -1,0 +1,55 @@
+{
+" This is a sample config file which can be given to Nyuu using the -C flag ":0,
+" This file has some tweaks and fun stuff added to make bots that scrape abuse info have a more difficult time. It also brands Abook more in the headers. ":0,
+" See help-short.txt for an explanation for what each item does ":0,
+" Be aware that this file needs to be formatted as JSON. Basically, values you give need to be surrounded by double-quotes with a comma at the end (see below for examples). The only values which don't use quotes are integers and the special values 'true', 'false' and 'null' ":0,
+
+" *** Server Options *** ":0,
+"host":               "block.newsserver.com.au",
+"port":               563,
+"ssl":                true,
+"ignore-cert":        false,
+"user":               "{USERNAME HERE}",
+"password":           "{PASSWORD HERE}",
+"connections":        10,
+
+" *** Article Options *** ":0,
+"article-size":       "700K",
+"comment":            "",
+"from":               "Post Name <abook@funky.town>",
+"groups":             "alt.binaries.test",
+"groupFiles":         true,
+
+" *** Check Options *** ":0,
+"check-connections":  0,
+"check-tries":        2,
+"check-delay":        "5s",
+"check-retry-delay":  "30s",
+"check-post-tries":   1,
+
+" *** NZB Options *** ":0,
+"out":                null,
+"overwrite":          false,
+
+" *** Other Options *** ":0,
+"skip-errors":        false,
+"quiet":              false,
+
+"Message-ID":       "${rand(24)}-{timestamp}$abook@abook.link",
+
+"header": {
+    "User-Agent": "Abook/v3",
+    "X-Newsposter": "Abook/v3",
+    "X-Abuse": "ABUSE@usenet.byproxy.au",
+    "X-Mail-Complaints-To": "ABUSE@usenet.byproxy.au",
+    "Mail-Complaints-To": "ABUSE@usenet.byproxy.au",
+    "X-Complaints-To": "ABUSE@usenet.byproxy.au",
+    "XX-Complaints-To": "X-Complaints-To: ABUSE@usenet.byproxy.au",
+    "Organization": "usenet.byproxy.au",
+    "Injection-Info": "usenet.byproxy.au; mail-complaints-to=\"ABUSE@usenet.byproxy.au\""
+},
+
+" More options can be specified; see help.txt for a list with explanations ":0,
+
+" End of config file ":0
+}
