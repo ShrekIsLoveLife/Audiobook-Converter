@@ -30,9 +30,10 @@ fi
 
 mkdir "${post_name}"
 mkdir "${PWD##*/}"
-mv *.nfo *.png *.jpg *.pdf *.m3u *.mp4 *.mp3 *.doc "${PWD##*/}/"
+mv *.nfo *.png *.jpg *.pdf *.m3u *.m4b *.mp4 *.mp3 *.cue *.epub *.mobi *.doc *.pdf "${PWD##*/}/"
 cd "${PWD##*/}/"
 mv *.forum_template.txt ../
+mv *.passwd ../
 cd ../
 rar a -m1 -v15m -x"*.forum_template.txt" "${post_name}/${post_name}.rar" "${PWD##*/}"
 

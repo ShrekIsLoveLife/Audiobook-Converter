@@ -13,8 +13,12 @@ while [ -h "$SOURCE" ]; do # resolve $SOURCE until the file is no longer a symli
 done
 DIR="$( cd -P "$( dirname "$SOURCE" )" && pwd )"
 
-post_pass=`cat ${DIR_LN}/rar.passwd`
-# echo ${post_pass}
+post_pass=`cat rar.passwd 2>/dev/null`
+if [ -z "${post_pass}"  ]
+then
+	post_pass=`cat ${DIR_LN}/rar.passwd`
+fi
+echo ${post_pass}
 
 post_name=`cat usenet_name.txt 2>/dev/null`
 # echo ${post_name}
@@ -33,9 +37,10 @@ fi
 
 mkdir "${post_name}"
 mkdir "${PWD##*/}"
-mv *.nfo *.png *.jpg *.pdf *.m3u *.m4b *.mp4 *.mp3 *.cue *.epub *.mobi *.doc "${PWD##*/}/"
+mv *.nfo *.png *.jpg *.pdf *.m3u *.m4b *.mp4 *.mp3 *.cue *.epub *.mobi *.doc *.pdf "${PWD##*/}/"
 cd "${PWD##*/}/"
 mv *.forum_template.txt ../
+mv *.passwd ../
 cd ../
 rar a -m1 -v15m -hp"${post_pass}" -x"*.forum_template.txt" "${post_name}/${post_name}.rar" "${PWD##*/}"
 
