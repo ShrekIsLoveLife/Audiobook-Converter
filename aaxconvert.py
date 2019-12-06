@@ -82,7 +82,8 @@
 #     * cd /opt/storage/aax/
 #     * /opt/storage/dev/Audiobook-Converter/install_here.sh
 #     * EDIT /opt/storage/aax/rar.passwd
-#     * Place https://github.com/ShrekIsLoveLife/gopoststuff-abook/raw/master/sample.gopoststuff.conf as ~/.gopoststuff.conf and edit it
+#     * # Ignore this, use nyuu and it's config and uploader now and parpar also
+#     *      Place https://github.com/ShrekIsLoveLife/gopoststuff-abook/raw/master/sample.gopoststuff.conf as ~/.gopoststuff.conf and edit it
 #     * # I like to make a tmpfs/ram disk to do processing on to speed things up
 #     * mkdir /opt/storage/aax/tmpfs1
 #     * sudo mount -t tmpfs -o size=8192m tmpfs /opt/storage/aax/tmpfs1
@@ -174,6 +175,7 @@ Author:   [color=white]{meta:author}[/color]
 Read By:   [color=white]{meta:read_by}[/color]
 Date:   [color=white]{meta:date}[/color]
 Publisher:   [color=white]{meta:publisher}[/color]
+Genre:   [color=white]{meta:genre}[/color]
 Series:   [color=white]{meta:series}[/color]
 
 [b]File Information[/b]
@@ -216,6 +218,7 @@ nfo_template += '{0: <25}'.format(' Read By:') + '{meta:read_by}\n'
 # nfo_template += '{0: <25}'.format(' Copyright:') + '{meta:copyright}\n'
 nfo_template += '{0: <25}'.format(' Date:') + '{meta:date}\n'
 nfo_template += '{0: <25}'.format(' Publisher:') + '{meta:publisher}\n'
+nfo_template += '{0: <25}'.format(' Genre:') + '{meta:genre}\n'
 nfo_template += '{0: <25}'.format(' Series:') + '{meta:series}\n'
 nfo_template += '''
 File Information
@@ -437,6 +440,11 @@ def replace_nfo_vars(nfo_file, fileinfo, is_template=False):
       nfo_file = re.sub(r'{meta:rar_passwd}', fileinfo['a_meta_data']['rar_passwd'], nfo_file)
     else:
       nfo_file = re.sub(r'{meta:rar_passwd}', 'unknown', nfo_file)
+
+    if 'genre' in fileinfo['a_meta_data']:
+      nfo_file = re.sub(r'{meta:genre}', fileinfo['a_meta_data']['genre'], nfo_file)
+    else:
+      nfo_file = re.sub(r'{meta:genre}', 'unknown', nfo_file)
 
     if 'series' in fileinfo['a_meta_data']:
       nfo_file = re.sub(r'{meta:series}', fileinfo['a_meta_data']['series'], nfo_file)
