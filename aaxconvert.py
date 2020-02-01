@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 # Title:             AAX Audiobook Converter
-# Version:           v1.4 (2019-11-12)
+# Version:           v1.5 (2020-02-01)
 # Arthor:            "[Shrek]"  BTC: 1ANyHwihu9dL2CZ9LUZ48FdYTzyz8CCCFf
 # Original Arthor:   "[Shrek]"  BTC: 1ANyHwihu9dL2CZ9LUZ48FdYTzyz8CCCFf
 # License:           GNU GPLv3
@@ -154,7 +154,8 @@ Tabbed:
 {meta:author_plain}\t{meta:title_filtered}\t{meta:series_formatted}\t{meta:date_orig}\tabook.link - {meta:instance_hash}\t{meta:rar_passwd}
 
 Subject:
-{meta:author_plain} - {meta:title_filtered} ({meta:date_orig}) {meta:series_formatted}
+{meta:author_plain} - {meta:series_formatted} - {meta:title_filtered} ({meta:date_orig})
+{meta:author_plain} - {meta:title_filtered} ({meta:date_orig})
 
 Password:
 {meta:rar_passwd}
@@ -239,7 +240,7 @@ Book Description
 
 print ''
 print header_file
-print '      AAX Audiobook Converter v1.4\n         By "[Shrek]"\nBTC: 1ANyHwihu9dL2CZ9LUZ48FdYTzyz8CCCFf\n'
+print '      AAX Audiobook Converter v1.5\n         By "[Shrek]"\nBTC: 1ANyHwihu9dL2CZ9LUZ48FdYTzyz8CCCFf\n'
 
 prevlinect = 0
 prevline = ''
@@ -526,7 +527,7 @@ def process_audiobook(filename, a_meta_data):
       print '\n\nERROR: Duration does not match last chapter end!\n'
       print 'The File Duration is: ' + str(fileinfo['meta']['duration']) + 's'
       print 'Last Chapter Ends at: ' + str(fileinfo['meta']['last_chapter_end']) + 's'
-      print '\nIf this is only off by a fraction of a second, it\'s probable safe to continue'
+      print '\nIf this is only off by a fraction of a second, it\'s probably safe to continue'
       if (raw_input('\nWould you like to continue? (y/N): ').strip().lower() != 'y'):
         print '\tResponse not Y, exiting...'
         sys.exit(1)
